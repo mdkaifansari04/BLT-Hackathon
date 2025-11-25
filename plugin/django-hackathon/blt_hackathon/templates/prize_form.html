@@ -19,7 +19,13 @@
                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                 Position <span class="text-red-500">*</span>
                             </label>
-                            {{ form.position }}
+                            <select name="{{ form.position.name }}" id="{{ form.position.id_for_label }}" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-[#e74c3c] focus:ring focus:ring-[#e74c3c] focus:ring-opacity-50 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
+                                <option value="">Select position</option>
+                                <option value="1" {% if form.position.value == '1' %}selected{% endif %}>1st Place</option>
+                                <option value="2" {% if form.position.value == '2' %}selected{% endif %}>2nd Place</option>
+                                <option value="3" {% if form.position.value == '3' %}selected{% endif %}>3rd Place</option>
+                                <option value="other" {% if form.position.value == 'other' %}selected{% endif %}>Other</option>
+                            </select>
                             {% if form.position.errors %}<p class="mt-1 text-sm text-red-600">{{ form.position.errors.0 }}</p>{% endif %}
                         </div>
                         <!-- Title -->
@@ -28,7 +34,7 @@
                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                 Title <span class="text-red-500">*</span>
                             </label>
-                            {{ form.title }}
+                            <input type="text" name="{{ form.title.name }}" value="{{ form.title.value|default:'' }}" id="{{ form.title.id_for_label }}" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-[#e74c3c] focus:ring focus:ring-[#e74c3c] focus:ring-opacity-50 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100" placeholder="e.g., Best Overall Contribution">
                             {% if form.title.errors %}<p class="mt-1 text-sm text-red-600">{{ form.title.errors.0 }}</p>{% endif %}
                             <p class="mt-1 text-xs text-gray-500 dark:text-gray-500">
                                 Example: "Best Overall Contribution", "Most Innovative Solution"
@@ -40,7 +46,7 @@
                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                 Description <span class="text-red-500">*</span>
                             </label>
-                            {{ form.description }}
+                            <textarea name="{{ form.description.name }}" id="{{ form.description.id_for_label }}" rows="4" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-[#e74c3c] focus:ring focus:ring-[#e74c3c] focus:ring-opacity-50 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100" placeholder="Describe the prize criteria and what it represents...">{{ form.description.value|default:'' }}</textarea>
                             {% if form.description.errors %}<p class="mt-1 text-sm text-red-600">{{ form.description.errors.0 }}</p>{% endif %}
                         </div>
                         <!-- Value -->
@@ -49,7 +55,7 @@
                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                 Value
                             </label>
-                            {{ form.value }}
+                            <input type="text" name="{{ form.value.name }}" value="{{ form.value.value|default:'' }}" id="{{ form.value.id_for_label }}" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-[#e74c3c] focus:ring focus:ring-[#e74c3c] focus:ring-opacity-50 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100" placeholder="e.g., $500, Gift card, etc.">
                             {% if form.value.errors %}<p class="mt-1 text-sm text-red-600">{{ form.value.errors.0 }}</p>{% endif %}
                             <p class="mt-1 text-xs text-gray-500 dark:text-gray-500">Monetary value of the prize (optional)</p>
                         </div>
@@ -59,7 +65,12 @@
                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                 Sponsor
                             </label>
-                            {{ form.sponsor }}
+                            <select name="{{ form.sponsor.name }}" id="{{ form.sponsor.id_for_label }}" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-[#e74c3c] focus:ring focus:ring-[#e74c3c] focus:ring-opacity-50 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
+                                <option value="">Select a sponsor (optional)</option>
+                                {% for choice in form.sponsor.field.queryset %}
+                                    <option value="{{ choice.pk }}" {% if form.sponsor.value == choice.pk %}selected{% endif %}>{{ choice }}</option>
+                                {% endfor %}
+                            </select>
                             {% if form.sponsor.errors %}<p class="mt-1 text-sm text-red-600">{{ form.sponsor.errors.0 }}</p>{% endif %}
                             <p class="mt-1 text-xs text-gray-500 dark:text-gray-500">Select a sponsor for this prize (optional)</p>
                         </div>

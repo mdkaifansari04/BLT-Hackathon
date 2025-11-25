@@ -26,7 +26,7 @@
                                    class="block text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
                                 Hackathon Name <span class="text-[#e74c3c]">*</span>
                             </label>
-                            {{ form.name }}
+                            <input type="text" name="{{ form.name.name }}" value="{{ form.name.value|default:'' }}" id="{{ form.name.id_for_label }}" class="mt-1 p-3 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-[#e74c3c] focus:ring focus:ring-[#e74c3c] focus:ring-opacity-50 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100" placeholder="Enter hackathon name">
                             {% if form.name.errors %}<p class="mt-2 text-sm text-red-600">{{ form.name.errors.0 }}</p>{% endif %}
                         </div>
                         <!-- Organization OR Owner (conditional) -->
@@ -36,7 +36,12 @@
                                    class="block text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
                                 Organization <span class="text-[#e74c3c]">*</span>
                             </label>
-                            {{ form.organization }}
+                            <select name="{{ form.organization.name }}" id="{{ form.organization.id_for_label }}" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-[#e74c3c] focus:ring focus:ring-[#e74c3c] focus:ring-opacity-50 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
+                                <option value="">Select an organization</option>
+                                {% for choice in form.organization.field.queryset %}
+                                    <option value="{{ choice.pk }}" {% if form.organization.value == choice.pk %}selected{% endif %}>{{ choice }}</option>
+                                {% endfor %}
+                            </select>
                             {% if form.organization.errors %}<p class="mt-2 text-sm text-red-600">{{ form.organization.errors.0 }}</p>{% endif %}
                             <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
                                 Organization hosting this hackathon with repository access.
@@ -48,7 +53,12 @@
                                    class="block text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
                                 Owner <span class="text-[#e74c3c]">*</span>
                             </label>
-                            {{ form.owner }}
+                            <select name="{{ form.owner.name }}" id="{{ form.owner.id_for_label }}" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-[#e74c3c] focus:ring focus:ring-[#e74c3c] focus:ring-opacity-50 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
+                                <option value="">Select an owner</option>
+                                {% for choice in form.owner.field.queryset %}
+                                    <option value="{{ choice.pk }}" {% if form.owner.value == choice.pk %}selected{% endif %}>{{ choice }}</option>
+                                {% endfor %}
+                            </select>
                             {% if form.owner.errors %}<p class="mt-2 text-sm text-red-600">{{ form.owner.errors.0 }}</p>{% endif %}
                             <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
                                 The user who owns and manages this hackathon.
@@ -61,7 +71,7 @@
                                    class="block text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
                                 Description <span class="text-[#e74c3c]">*</span>
                             </label>
-                            {{ form.description }}
+                            <textarea name="{{ form.description.name }}" id="{{ form.description.id_for_label }}" rows="4" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-[#e74c3c] focus:ring focus:ring-[#e74c3c] focus:ring-opacity-50 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100" placeholder="Describe your hackathon...">{{ form.description.value|default:'' }}</textarea>
                             {% if form.description.errors %}<p class="mt-2 text-sm text-red-600">{{ form.description.errors.0 }}</p>{% endif %}
                         </div>
                     </div>
@@ -78,7 +88,7 @@
                                        class="block text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
                                     Start Time <span class="text-[#e74c3c]">*</span>
                                 </label>
-                                {{ form.start_time }}
+                                <input type="datetime-local" name="{{ form.start_time.name }}" value="{{ form.start_time.value|default:'' }}" id="{{ form.start_time.id_for_label }}" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-[#e74c3c] focus:ring focus:ring-[#e74c3c] focus:ring-opacity-50 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
                                 {% if form.start_time.errors %}<p class="mt-2 text-sm text-red-600">{{ form.start_time.errors.0 }}</p>{% endif %}
                             </div>
                             <!-- End Time -->
@@ -87,7 +97,7 @@
                                        class="block text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
                                     End Time <span class="text-[#e74c3c]">*</span>
                                 </label>
-                                {{ form.end_time }}
+                                <input type="datetime-local" name="{{ form.end_time.name }}" value="{{ form.end_time.value|default:'' }}" id="{{ form.end_time.id_for_label }}" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-[#e74c3c] focus:ring focus:ring-[#e74c3c] focus:ring-opacity-50 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
                                 {% if form.end_time.errors %}<p class="mt-2 text-sm text-red-600">{{ form.end_time.errors.0 }}</p>{% endif %}
                             </div>
                         </div>
@@ -95,13 +105,13 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <!-- Registration Open -->
                             <div class="flex items-center space-x-3 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700">
-                                {{ form.registration_open }}
-                                <label for="{{ form.registration_open.id_for_label }}"
-                                       class="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                                <input type=\"checkbox\" name=\"{{ form.registration_open.name }}\" id=\"{{ form.registration_open.id_for_label }}\" class=\"h-4 w-4 text-[#e74c3c] focus:ring-[#e74c3c] border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700\" {% if form.registration_open.value %}checked{% endif %}>
+                                <label for=\"{{ form.registration_open.id_for_label }}\"
+                                       class=\"text-lg font-semibold text-gray-900 dark:text-gray-100\">
                                     Registration Open
                                 </label>
                                 {% if form.registration_open.errors %}
-                                    <p class="mt-2 text-sm text-red-600">{{ form.registration_open.errors.0 }}</p>
+                                    <p class=\"mt-2 text-sm text-red-600\">{{ form.registration_open.errors.0 }}</p>
                                 {% endif %}
                             </div>
                             <!-- Max Participants -->
@@ -110,7 +120,7 @@
                                        class="block text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
                                     Max Participants
                                 </label>
-                                {{ form.max_participants }}
+                                <input type="number" name="{{ form.max_participants.name }}" value="{{ form.max_participants.value|default:'' }}" id="{{ form.max_participants.id_for_label }}" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-[#e74c3c] focus:ring focus:ring-[#e74c3c] focus:ring-opacity-50 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100" placeholder="e.g., 100" min="1">
                                 {% if form.max_participants.errors %}
                                     <p class="mt-2 text-sm text-red-600">{{ form.max_participants.errors.0 }}</p>
                                 {% endif %}
@@ -129,7 +139,7 @@
                             </label>
                             <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 dark:border-gray-600 border-dashed rounded-lg hover:border-[#e74c3c] transition-colors">
                                 <div class="space-y-1 text-center">
-                                    {{ form.banner_image }}
+                                    <input type="file" name="{{ form.banner_image.name }}" id="{{ form.banner_image.id_for_label }}" accept="image/*" class="block w-full text-sm text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600 rounded-md cursor-pointer bg-white dark:bg-gray-700 focus:outline-none focus:border-[#e74c3c] focus:ring focus:ring-[#e74c3c] focus:ring-opacity-50">
                                     <p class="text-sm text-gray-600 dark:text-gray-400">Recommended size: 1200x400 pixels</p>
                                 </div>
                             </div>
@@ -147,7 +157,7 @@
                                    class="block text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
                                 Hackathon Rules
                             </label>
-                            {{ form.rules }}
+                            <textarea name="{{ form.rules.name }}" id="{{ form.rules.id_for_label }}" rows="6" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-[#e74c3c] focus:ring focus:ring-[#e74c3c] focus:ring-opacity-50 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100" placeholder="Enter hackathon rules and guidelines...">{{ form.rules.value|default:'' }}</textarea>
                             {% if form.rules.errors %}<p class="mt-2 text-sm text-red-600">{{ form.rules.errors.0 }}</p>{% endif %}
                             <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
                                 Define the rules and guidelines for your hackathon participants
@@ -167,7 +177,11 @@
                                 Select Existing Repositories
                             </label>
                             <div class="relative">
-                                {{ form.repositories }}
+                                <select name="{{ form.repositories.name }}" id="{{ form.repositories.id_for_label }}" multiple class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-[#e74c3c] focus:ring focus:ring-[#e74c3c] focus:ring-opacity-50 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100" size="5">
+                                    {% for choice in form.repositories.field.queryset %}
+                                        <option value="{{ choice.pk }}" {% if choice.pk in form.repositories.value %}selected{% endif %}>{{ choice }}</option>
+                                    {% endfor %}
+                                </select>
                                 <div id="repositories-loading" class="mt-2 hidden">
                                     <p class="text-sm text-gray-600 dark:text-gray-400">Loading repositories...</p>
                                 </div>
@@ -183,13 +197,13 @@
                                    class="block text-base font-semibold text-gray-900 dark:text-gray-100 mb-2">
                                 Add New Repositories
                             </label>
-                            {{ form.new_repo_urls }}
+                            <textarea name="{{ form.new_repo_urls.name }}" id="{{ form.new_repo_urls.id_for_label }}" rows="4" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-[#e74c3c] focus:ring focus:ring-[#e74c3c] focus:ring-opacity-50 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100" placeholder="https://github.com/owner/repo1&#10;https://github.com/owner/repo2&#10;...">{{ form.new_repo_urls.value|default:'' }}</textarea>
                             {% if form.new_repo_urls.errors %}
                                 <p class="mt-2 text-sm text-red-600">{{ form.new_repo_urls.errors.0 }}</p>
                             {% endif %}
                             <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">{{ form.new_repo_urls.help_text }}</p>
-                            <div class="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                                <p class="text-sm text-blue-800">
+                            <div class="mt-2 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+                                <p class="text-sm text-blue-800 dark:text-blue-200">
                                     <strong>Tip:</strong> Enter one GitHub repository URL per line. New repositories will be created and automatically added to this hackathon.
                                 </p>
                             </div>
@@ -209,7 +223,7 @@
                                    class="block text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
                                 Sponsorship Note
                             </label>
-                            {{ form.sponsor_note }}
+                            <textarea name="{{ form.sponsor_note.name }}" id="{{ form.sponsor_note.id_for_label }}" rows="4" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-[#e74c3c] focus:ring focus:ring-[#e74c3c] focus:ring-opacity-50 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100" placeholder="Describe sponsorship opportunities...">{{ form.sponsor_note.value|default:'' }}</textarea>
                             {% if form.sponsor_note.errors %}<p class="mt-2 text-sm text-red-600">{{ form.sponsor_note.errors.0 }}</p>{% endif %}
                             <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
                                 Describe sponsorship opportunities and benefits for this hackathon
@@ -221,7 +235,7 @@
                                    class="block text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
                                 Sponsorship Link
                             </label>
-                            {{ form.sponsor_link }}
+                            <input type="url" name="{{ form.sponsor_link.name }}" value="{{ form.sponsor_link.value|default:'' }}" id="{{ form.sponsor_link.id_for_label }}" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-[#e74c3c] focus:ring focus:ring-[#e74c3c] focus:ring-opacity-50 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100" placeholder="https://example.com/sponsor">
                             {% if form.sponsor_link.errors %}<p class="mt-2 text-sm text-red-600">{{ form.sponsor_link.errors.0 }}</p>{% endif %}
                             <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
                                 URL to your sponsorship information page or application form

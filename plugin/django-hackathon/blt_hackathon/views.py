@@ -328,31 +328,38 @@ class HackathonDetailView(DetailView):
         # Use the end date or today, whichever is earlier for the chart
         chart_end_date = min(hackathon_end_date, today)
 
-        # Query IP table for view counts during hackathon period
-        # Use path__contains to match the widget's behavior
-        hackathon_view_data = (
-            IP.objects.filter(
-                path__contains=hackathon_path,
-                created__date__gte=hackathon_start_date,
-                created__date__lte=chart_end_date,
+        # Query IP table for view counts during hackathon period (if available)
+        if IP:
+            # Use path__contains to match the widget's behavior
+            hackathon_view_data = (
+                IP.objects.filter(
+                    path__contains=hackathon_path,
+                    created__date__gte=hackathon_start_date,
+                    created__date__lte=chart_end_date,
+                )
+                .annotate(date=TruncDate("created"))
+                .values("date")
+                .annotate(count=Sum("count"))
+                .order_by("date")
             )
-            .annotate(date=TruncDate("created"))
-            .values("date")
-            .annotate(count=Sum("count"))
-            .order_by("date")
-        )
 
-        # Prepare data for the sparkline chart (hackathon timeframe)
-        date_counts = {item["date"]: item["count"] for item in hackathon_view_data}
-        dates, counts = self._get_date_range_data(hackathon_start_date, chart_end_date, date_counts)
+            # Prepare data for the sparkline chart (hackathon timeframe)
+            date_counts = {item["date"]: item["count"] for item in hackathon_view_data}
+            dates, counts = self._get_date_range_data(hackathon_start_date, chart_end_date, date_counts)
 
-        context["view_dates"] = json.dumps(dates)
-        context["view_counts"] = json.dumps(counts)
-        context["hackathon_views"] = sum(counts)
+            context["view_dates"] = json.dumps(dates)
+            context["view_counts"] = json.dumps(counts)
+            context["hackathon_views"] = sum(counts)
 
-        # Calculate all-time views (from the beginning)
-        all_time_views = IP.objects.filter(path__contains=hackathon_path).aggregate(total=Sum("count"))["total"] or 0
-        context["all_time_views"] = all_time_views
+            # Calculate all-time views (from the beginning)
+            all_time_views = IP.objects.filter(path__contains=hackathon_path).aggregate(total=Sum("count"))["total"] or 0
+            context["all_time_views"] = all_time_views
+        else:
+            # No IP model available, provide default values
+            context["view_dates"] = json.dumps([])
+            context["view_counts"] = json.dumps([])
+            context["hackathon_views"] = 0
+            context["all_time_views"] = 0
 
         return context
 
@@ -735,10 +742,11 @@ def _process_pull_request(pr_data, hackathon, repo):
             contributor=contributor,  # Link to contributor
         )
 
-        # Try to find a user profile for the PR author
-        matching_profiles = UserProfile.objects.filter(github_url__icontains=github_username)
-        if matching_profiles.exists():
-            new_pr.user_profile = matching_profiles.first()
+        # Try to find a user profile for the PR author (if UserProfile model available)
+        if UserProfile:
+            matching_profiles = UserProfile.objects.filter(github_url__icontains=github_username)
+            if matching_profiles.exists():
+                new_pr.user_profile = matching_profiles.first()
 
         new_pr.save()
         return True  # New PR added
@@ -748,6 +756,11 @@ def _process_pull_request(pr_data, hackathon, repo):
 def add_org_repos_to_hackathon(request, slug):
     """View to add all organization repositories to a hackathon."""
     hackathon = get_object_or_404(Hackathon, slug=slug)
+
+    # Check if this feature is available (requires both Organization and Repo models)
+    if not (HAS_ORGANIZATION and Repo):
+        messages.error(request, "This feature is not available in the current configuration.")
+        return redirect("hackathons")
 
     # Check if user has permission to manage this hackathon
     user = request.user
