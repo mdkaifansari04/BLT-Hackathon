@@ -14,7 +14,7 @@ from .views import (
 
 urlpatterns = [
      path(
-        "/",
+        "",
         include(
             [
                 path("", HackathonListView.as_view(), name="hackathons"),

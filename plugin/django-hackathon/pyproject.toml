@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "blt-hackathon"
-version = "0.1.0"
+version = "0.1.1"
 description = "A Django plugin for managing hackathons with GitHub integration"
 readme = "README.md"
 license = {file = "LICENSE"}
@@ -64,7 +64,7 @@ include = ["blt_hackathon*"]
 exclude = ["tests*"]
 
 [tool.setuptools.package-data]
-blt_hackathon = ["templates/**/*.html", "static/**/*"]
+blt_hackathon = ["templates/**/*.html", "static/**/*", "templatetags/*.py"]
 
 [tool.black]
 line-length = 120

@@ -62,7 +62,7 @@ class HackathonListView(ListView):
     """View for listing all hackathons."""
 
     model = Hackathon
-    template_name = "hackathons/list.html"
+    template_name = "list.html"
     context_object_name = "hackathons"
     paginate_by = 10
 
@@ -123,7 +123,7 @@ class HackathonDetailView(DetailView):
     """View for displaying a single hackathon."""
 
     model = Hackathon
-    template_name = "hackathons/detail.html"
+    template_name = "detail.html"
     context_object_name = "hackathon"
     slug_field = "slug"
     slug_url_kwarg = "slug"
@@ -361,7 +361,7 @@ class HackathonFormMixin:
     """Mixin for common functionality between hackathon create and update views."""
 
     form_class = HackathonForm
-    template_name = "hackathons/form.html"
+    template_name = "form.html"
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -445,7 +445,7 @@ class HackathonSponsorCreateView(HackathonItemCreateMixin, CreateView):
 
     model = HackathonSponsor
     form_class = HackathonSponsorForm
-    template_name = "hackathons/sponsor_form.html"
+    template_name = "sponsor_form.html"
     item_type_name = "Sponsor"
 
 
@@ -454,7 +454,7 @@ class HackathonPrizeCreateView(HackathonItemCreateMixin, CreateView):
 
     model = HackathonPrize
     form_class = HackathonPrizeForm
-    template_name = "hackathons/prize_form.html"
+    template_name = "prize_form.html"
     item_type_name = "Prize"
 
     def get_form_kwargs(self):
