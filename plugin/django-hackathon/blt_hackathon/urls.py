@@ -12,7 +12,7 @@ from .views import (
     add_org_repos_to_hackathon,
 )
 
-urlPatterns = [
+urlpatterns = [
      path(
         "/",
         include(

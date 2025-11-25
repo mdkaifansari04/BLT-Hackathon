@@ -60,11 +60,11 @@ Documentation = "https://github.com/OWASP-BLT/BLT-Hackathon#readme"
 Issues = "https://github.com/OWASP-BLT/BLT-Hackathon/issues"
 
 [tool.setuptools.packages.find]
-include = ["hackathon*"]
+include = ["blt_hackathon*"]
 exclude = ["tests*"]
 
 [tool.setuptools.package-data]
-hackathon = ["templates/**/*.html", "static/**/*"]
+blt_hackathon = ["templates/**/*.html", "static/**/*"]
 
 [tool.black]
 line-length = 120
