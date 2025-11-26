@@ -7,27 +7,13 @@ from .models import (
     Hackathon,
     HackathonPrize,
     HackathonSponsor,
+    Repository,
     get_organization_model,
     HAS_ORGANIZATION,
 )
 
 # Get Organization model if available
 Organization = get_organization_model() if HAS_ORGANIZATION else None
-
-# Try to get Repo model (might be in website app)
-Repo = None
-if HAS_ORGANIZATION:
-    try:
-        from django.apps import apps
-        # Try common app names where Repo model might exist
-        for app_name in ['website', 'blt', 'main', 'core']:
-            try:
-                Repo = apps.get_model(app_name, 'Repo')
-                break
-            except LookupError:
-                continue
-    except ImportError:
-        pass
 
 
 
@@ -169,12 +155,9 @@ class HackathonForm(forms.ModelForm):
             else:
                 self.fields["organization"].queryset = Organization.objects.all()
 
-            # Handle repositories field if available
-            if Repo and "repositories" in self.fields:
-                if self.instance.pk and hasattr(self.instance, 'organization') and self.instance.organization:
-                    self.fields["repositories"].queryset = Repo.objects.filter(organization=self.instance.organization)
-                else:
-                    self.fields["repositories"].queryset = Repo.objects.none()
+            # Handle repositories field
+            if "repositories" in self.fields:
+                self.fields["repositories"].queryset = Repository.objects.all()
         
         elif not HAS_ORGANIZATION and user:
             # Handle owner field
@@ -192,8 +175,8 @@ class HackathonForm(forms.ModelForm):
         if not new_repo_urls:
             return []
 
-        # Only validate repo URLs if Repo model is available
-        if not Repo:
+        # Only validate repo URLs if Repository model is available
+        if not Repository:
             return []
 
         urls = [url.strip() for url in new_repo_urls.strip().split("\n") if url.strip()]
@@ -217,13 +200,6 @@ class HackathonForm(forms.ModelForm):
 
     def clean_repositories(self):
         repositories = self.cleaned_data.get("repositories")
-        organization = self.cleaned_data.get("organization")
-
-        # Only validate if both Repo model and organization are available
-        if repositories and organization and Repo:
-            # Ensure all repositories belong to the selected organization
-            valid_repos = Repo.objects.filter(id__in=[r.id for r in repositories], organization=organization)
-            return valid_repos
         return repositories
 
     def save(self, commit=True):
@@ -235,25 +211,26 @@ class HackathonForm(forms.ModelForm):
             # Save many-to-many relationships
             self.save_m2m()
 
-            # Create and add new repositories only if Repo model is available
+            # Create and add new repositories
             new_repo_urls = self.cleaned_data.get("new_repo_urls", [])
-            if new_repo_urls and Repo and hasattr(instance, 'organization') and instance.organization:
-                organization = instance.organization
+            if new_repo_urls:
                 for repo_url in new_repo_urls:
-                    # Extract repo name from URL
-                    repo_name = repo_url.rstrip("/").split("/")[-1]
+                    # Extract owner and repo name from URL
+                    parts = repo_url.rstrip("/").split("/")
+                    repo_name = parts[-1]
+                    owner = parts[-2]
 
                     # Check if repo already exists
-                    existing_repo = Repo.objects.filter(repo_url=repo_url).first()
+                    existing_repo = Repository.objects.filter(repo_url=repo_url).first()
                     if existing_repo:
                         # Add existing repo to hackathon
                         instance.repositories.add(existing_repo)
                     else:
                         # Create new repo
-                        new_repo = Repo.objects.create(
+                        new_repo = Repository.objects.create(
                             name=repo_name,
+                            owner=owner,
                             repo_url=repo_url,
-                            organization=organization,
                         )
                         instance.repositories.add(new_repo)
 
