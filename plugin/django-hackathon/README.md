@@ -1,4 +1,4 @@
-# Django Hackathon Management
+# Hackathon Management Plugin
 
 A Django plugin for organizing and managing hackathons with GitHub repository integration.
 
@@ -19,19 +19,37 @@ A Django plugin for organizing and managing hackathons with GitHub repository in
 
 ## Installation
 
-Install the plugin using pip:
+### From TestPyPI (Latest)
+
+```bash
+pip install -i https://test.pypi.org/simple/ blt-hackathon==0.1.1
+```
+
+**Latest Version**: Check [https://test.pypi.org/project/blt-hackathon](https://test.pypi.org/project/blt-hackathon) for updates.
+
+### From PyPI (Stable)
 
 ```bash
 pip install blt-hackathon
 ```
 
-Or install from source for development:
+### From Source (Development)
 
 ```bash
 git clone https://github.com/OWASP-BLT/BLT-Hackathon.git
 cd BLT-Hackathon/plugin/django-hackathon
 pip install -e .
 ```
+
+## 🚀 Quick Testing
+
+**Want to test this plugin in under 5 minutes?** 
+
+👉 **[See the Complete Testing Guide](TESTING_GUIDE.md)** for step-by-step instructions to:
+- Create a test Django project
+- Install and configure the plugin
+- Test charts and all features
+- Troubleshoot common issues
 
 ## Configuration
 
@@ -70,34 +88,39 @@ urlpatterns = [
 ]
 ```
 
-### Step 3: Add Frontend Dependencies
+### Step 3: Add Frontend Dependencies (Required for Charts)
 
-The plugin requires Chart.js and Font Awesome to display charts and icons. Add these to your base template (usually `templates/base.html`):
+**⚠️ Important**: The plugin requires Chart.js and Font Awesome for charts and icons to work properly.
+
+Add these to your base template (usually `templates/base.html`):
 
 ```html
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="utf-8">
-    <title>Your Site</title>
+    <meta charset="UTF-8">
+    <title>{% block title %}Your Site{% endblock %}</title>
     
-    <!-- Font Awesome for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- REQUIRED: Chart.js for hackathon charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
-    <!-- Your other CSS -->
+    <!-- REQUIRED: Font Awesome 6.5.1 for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" 
+          integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" 
+          crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
     {% block extra_head %}{% endblock %}
 </head>
 <body>
     {% block content %}{% endblock %}
     
-    <!-- Chart.js for charts -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
-    <!-- Your other scripts -->
+    <!-- REQUIRED: Scripts block for Chart.js initialization -->
     {% block scripts %}{% endblock %}
 </body>
 </html>
 ```
+
+**Without these dependencies, charts will not display and icons will be missing.**
 
 ### Step 4: Run Migrations
 
@@ -105,30 +128,6 @@ Apply the database migrations:
 
 ```bash
 python manage.py migrate blt_hackathon
-```
-
-### Step 4: Create Base Template
-
-The plugin requires a base template at `templates/base.html` with the following blocks:
-
-```django
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <title>{% block title %}{% endblock %}</title>
-    <meta name="description" content="{% block description %}{% endblock %}">
-    <meta name="keywords" content="{% block keywords %}{% endblock %}">
-    <!-- Font Awesome 6.5.1 is required for icons -->
-    <link rel="stylesheet" 
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" 
-          integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" 
-          crossorigin="anonymous" 
-          referrerpolicy="no-referrer" />
-</head>
-<body>
-    {% block content %}{% endblock %}
-</body>
-</html>
 ```
 
 ## Usage
