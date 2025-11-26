@@ -1,9 +1,9 @@
-{% extends "hackathon_base.html" %}
+{% extends "base.html" %}
 {% load static %}
 {% block title %}
     {{ hackathon.name }} - Hackathon | OWASP BLT
 {% endblock title %}
-{% block hackathon_content %}
+{% block content %}
     {# Simple plugin layout - no sidenav #}
     <div class="container mx-auto px-4 py-8">
         <!-- Hackathon Header -->
@@ -373,36 +373,14 @@
             </div>
         </div>
     </div>
-{% endblock hackathon_content %}
-{% block hackathon_scripts %}
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock content %}
+{% block scripts %}
     <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize the sparkline chart
     const ctx = document.getElementById('viewsSparkline').getContext('2d');
     const dates = {{ view_dates|safe }};
     const counts = {{ view_counts|safe }};
-    
-    // Debug logging for sparkline
-    console.log('Sparkline dates:', dates);
-    console.log('Sparkline counts:', counts);
-    console.log('Sparkline canvas found:', !!ctx);
-    
-    if (typeof Chart === 'undefined') {
-        console.error('Chart.js is not loaded for sparkline!');
-        return;
-    }
-    
-    if (!ctx) {
-        console.error('Sparkline canvas element not found!');
-        return;
-    }
-    
-    // Check if we have valid data
-    if (!dates || !counts || dates.length === 0) {
-        console.warn('No sparkline data available, skipping chart creation');
-        return;
-    }
     
     new Chart(ctx, {
         type: 'bar',
@@ -445,36 +423,13 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
     });
+    console.log("Sparkline chart created successfully!");
     
     // Initialize the PR activity chart
     const prCtx = document.getElementById('prActivityChart').getContext('2d');
     const prDates = {{ pr_dates|safe }};
     const prCounts = {{ pr_counts|safe }};
     const mergedPrCounts = {{ merged_pr_counts|safe }};
-    
-    // Debug logging
-    console.log('Chart.js is available:', typeof Chart !== 'undefined');
-    console.log('prDates:', prDates);
-    console.log('prCounts:', prCounts);
-    console.log('mergedPrCounts:', mergedPrCounts);
-    console.log('Canvas element found:', !!prCtx);
-    
-    // Check if Chart.js is loaded before creating chart
-    if (typeof Chart === 'undefined') {
-        console.error('Chart.js is not loaded!');
-        return;
-    }
-    
-    if (!prCtx) {
-        console.error('Canvas element not found!');
-        return;
-    }
-    
-    // Check if we have valid data
-    if (!prDates || !prCounts || prDates.length === 0) {
-        console.warn('No PR chart data available, skipping chart creation');
-        return;
-    }
     
     new Chart(prCtx, {
         type: 'bar',
@@ -531,4 +486,4 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
     </script>
-{% endblock hackathon_scripts %}
+{% endblock scripts %}

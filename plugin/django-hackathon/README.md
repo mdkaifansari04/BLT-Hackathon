@@ -70,7 +70,36 @@ urlpatterns = [
 ]
 ```
 
-### Step 3: Run Migrations
+### Step 3: Add Frontend Dependencies
+
+The plugin requires Chart.js and Font Awesome to display charts and icons. Add these to your base template (usually `templates/base.html`):
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Your Site</title>
+    
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Your other CSS -->
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    {% block content %}{% endblock %}
+    
+    <!-- Chart.js for charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Your other scripts -->
+    {% block scripts %}{% endblock %}
+</body>
+</html>
+```
+
+### Step 4: Run Migrations
 
 Apply the database migrations:
 
